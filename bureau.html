@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="image/favicon.ico">
+    <title>Mon Bureau Windows XP</title>
+    <style>
+        @font-face {
+            font-family: 'MS Gothic';
+            src: url('image/ms-gothic.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "MS Gothic", 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #4169E1 0%, #87CEEB 100%);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background-image: url('image/fond_d_ecran.jpg');
+            background-size: cover;
+            cursor: url('image/curseur.png'), auto;
+        }
+
+        /* Desktop Icons */
+        .desktop {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100%;
+            height: calc(100% - 120px);
+        }
+
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .desktop-icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .desktop-icon.selected {
+            background-color: rgba(0, 123, 255, 0.3);
+            border: 1px dotted #fff;
+        }
+
+        .icon-image {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 4px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .icon-text {
+            color: white;
+            font-size: 11px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            line-height: 1.2;
+        }
+
+        /* Taskbar */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to bottom, #3d6dcc 0%, #2952a3 50%, #1941a5 51%, #1941a5 100%);
+            border-top: 1px solid #5c8cd6;
+            display: flex;
+            align-items: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+            padding: 0 8px;
+        }
+
+        .start-button {
+            height: 45px;
+            background: linear-gradient(to bottom, #3d6dcc 0%, #2952a3 50%, #1941a5 51%, #1941a5 100%);
+            border: 1px solid #5c8cd6;
+            border-radius: 6px;
+            margin: 4px;
+            padding: 0 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.1s;
+        }
+
+        .start-button:hover {
+            background: linear-gradient(to bottom, #4d7ddc 0%, #3962b3 50%, #2951b5 51%, #2951b5 100%);
+        }
+
+        .start-button:active {
+            background: linear-gradient(to bottom, #2d5dbc 0%, #1942a3 50%, #0931a5 51%, #0931a5 100%);
+            border: 1px solid #4c7cc6;
+        }
+
+        .start-icon {
+            width: 20px;
+            height: 20px;
+            background-image: url('image/favicon.ico');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Zone des applications minimisées */
+        .taskbar-apps {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+            flex: 1;
+        }
+
+        .taskbar-app {
+            height: 45px;
+            min-width: 150px;
+            max-width: 200px;
+            background: linear-gradient(to bottom, #2d5dbc 0%, #1942a3 50%, #0931a5 51%, #0931a5 100%);
+            border: 1px solid #4c7cc6;
+            border-radius: 4px;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 8px;
+            transition: all 0.1s;
+        }
+
+        .taskbar-app:hover {
+            background: linear-gradient(to bottom, #3d6dcc 0%, #2952a3 50%, #1941a5 51%, #1941a5 100%);
+        }
+
+        .taskbar-app.active {
+            background: linear-gradient(to bottom, #4d7ddc 0%, #3962b3 50%, #2951b5 51%, #2951b5 100%);
+            border: 1px solid #5c8cd6;
+        }
+
+        .taskbar-app-icon {
+            width: 16px;
+            height: 16px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .taskbar-app-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .clock {
+            margin-left: auto;
+            margin-right: 8px;
+            color: white;
+            font-size: 13px;
+            text-align: center;
+            padding: 6px 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+        }
+
+        /* Window Styles */
+        .window {
+            position: absolute;
+            background: #ece9d8;
+            border: 2px outset #ece9d8;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            display: none;
+            min-width: 400px;
+            min-height: 300px;
+        }
+
+        .window.active {
+            display: block;
+        }
+
+        .window.minimized {
+            display: none;
+        }
+
+        .window.maximized {
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: calc(100% - 60px) !important;
+            border-radius: 0;
+        }
+
+        .window-header {
+            background: linear-gradient(to right, #0054e3 0%, #0054e3 8%, #40a0ff 92%, #40a0ff 100%);
+            height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            border-radius: 6px 6px 0 0;
+            cursor: move;
+        }
+
+        .window.maximized .window-header {
+            border-radius: 0;
+        }
+
+        .window-title {
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            flex: 1;
+            margin-left: 4px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-control {
+            width: 21px;
+            height: 21px;
+            background: linear-gradient(to bottom, #ece9d8 0%, #d6d3ce 100%);
+            border: 1px outset #ece9d8;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Marlett', monospace;
+        }
+
+        .window-control:hover {
+            background: linear-gradient(to bottom, #f5f4f2 0%, #e5e2dd 100%);
+        }
+
+        .window-control:active {
+            border: 1px inset #ece9d8;
+        }
+
+        .window-content {
+            padding: 20px;
+            height: calc(100% - 32px);
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* Gallery content styling */
+        .gallery-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .gallery-image {
+            background: white;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .gallery-image:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-color: #0054e3;
+        }
+
+        .gallery-image img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-image-title {
+            padding: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            background: #f8f8f8;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Image viewer */
+        .image-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .image-viewer.active {
+            display: flex;
+        }
+
+        .image-viewer img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border: 2px solid white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .image-viewer-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Profile content styling */
+        .profile-content {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: none;
+            color: #333;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-image: url('image/profil.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 3px solid #ddd;
+        }
+
+        .profile-intro {
+            flex: 1;
+        }
+
+        .profile-intro h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .profile-description {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .profile-note {
+            font-style: italic;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .services-section {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .services-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .services-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .social-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: color 0.2s;
+        }
+
+        .social-link:hover {
+            color: #0054e3;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .social-icon.email {
+            background: #ea4335;
+        }
+
+        .social-icon.github {
+            background: #333;
+        }
+
+        /* Project content styling */
+        .project-content {
+            max-width: none;
+        }
+
+        .project-content h1 {
+            color: #0054e3;
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #0054e3;
+            padding-bottom: 10px;
+        }
+
+        .project-content h2 {
+            color: #333;
+            font-size: 18px;
+            margin: 25px 0 15px 0;
+        }
+
+        .project-content h3 {
+            color: #555;
+            font-size: 16px;
+            margin: 20px 0 10px 0;
+        }
+
+        .project-content p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .project-content ul {
+            margin: 10px 0 15px 25px;
+        }
+
+        .project-content li {
+            margin-bottom: 8px;
+        }
+
+        .project-content strong {
+            color: #0054e3;
+            font-weight: bold;
+        }
+
+        .project-content .highlight-box {
+            background: #f0f8ff;
+            border: 1px solid #0054e3;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        /* Project Icons */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .project-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background: #f8f8f8;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .project-item:hover {
+            background: #e8e8e8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .project-item:active {
+            background: #d8d8d8;
+        }
+
+        .project-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 8px;
+        }
+
+        .project-name {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .project-description {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* Styles pour fenêtre maximisée */
+        .window.maximized .project-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .window.maximized .project-item {
+            padding: 40px;
+            border-radius: 12px;
+        }
+
+        .window.maximized .project-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+
+        .window.maximized .project-name {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .window.maximized .project-description {
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .window.maximized .window-content {
+            padding: 40px;
+            font-size: 16px;
+        }
+
+        .window.maximized .window-content h3 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .window.maximized .window-content p {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .window.maximized .project-content h1 {
+            font-size: 32px;
+        }
+
+        .window.maximized .project-content h2 {
+            font-size: 24px;
+        }
+
+        .window.maximized .project-content h3 {
+            font-size: 20px;
+        }
+
+        /* Start Menu */
+        .start-menu {
+            position: fixed;
+            bottom: 60px;
+            left: 0;
+            width: 300px;
+            background: linear-gradient(to right, #2461cb 0%, #2461cb 60px, #f1f1f1 60px, #f1f1f1 100%);
+            border: 2px outset #ece9d8;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            display: none;
+            box-shadow: 2px -2px 10px rgba(0,0,0,0.3);
+        }
+
+        .start-menu.active {
+            display: block;
+        }
+
+        .start-menu-header {
+            height: 60px;
+            background: linear-gradient(45deg, #1a4ba3, #2461cb);
+            color: white;
+            display: flex;
+            align-items: flex-end;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 80px solid #2461cb;
+            position: relative;
+        }
+
+        .user-section {
+            position: absolute;
+            bottom: -70px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background-image: url('image/profil.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-name {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .start-menu-items {
+            padding: 8px 0;
+            margin-top: 20px;
+        }
+
+        .start-menu-item {
+            height: 32px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 11px;
+            position: relative;
+            padding-left: 70px;
+        }
+
+        .start-menu-item::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            background-size: 24px 24px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .start-menu-item:nth-child(1)::before { background-image: url('image/documents.png'); }
+        .start-menu-item:nth-child(2)::before { background-image: url('image/galerie.png'); }
+        .start-menu-item:nth-child(3)::before { background-image: url('image/profil.jpg'); }
+        .start-menu-item:nth-child(4)::before { background-image: url('image/bloc-note.png'); }
+        .start-menu-item:nth-child(5)::before { background-image: url('image/cmd.png'); }
+        .start-menu-item:nth-child(6)::before { background-image: url('image/corbeille.png'); }
+        .start-menu-item:nth-child(7)::before { background-image: url('image/parametre.png'); }
+        .start-menu-item:nth-child(9)::before { background-image: url('image/logoff.png'); }
+        .start-menu-item:nth-child(10)::before { background-image: url('image/shutdown.png'); }
+
+        .highlight {
+            background: #ffff99;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Icons */
+        .icon-cmd { 
+            background-image: url('image/cmd.png'); 
+        }
+        .icon-documents { 
+            background-image: url('image/documents.png'); 
+        }
+        .icon-notepad { 
+            background-image: url('image/bloc-note.png'); 
+        }
+        .icon-trash {
+            background-image: url('image/corbeille.png');
+        }
+        .icon-administrateur { 
+            background-image: url('image/profil.jpg'); 
+        }
+        .icon-galerie {
+            background-image: url('image/galerie.png');
+        }
+
+        /* Project specific icons */
+        .icon-pauvocoder {
+            background-image: url('image/documents.png');
+            background-color: #ff6b6b;
+        }
+        .icon-bouygues {
+            background-image: url('image/documents.png');
+            background-color: #4ecdc4;
+        }
+        .icon-naturalis {
+            background-image: url('image/documents.png');
+            background-color: #45b7d1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Desktop Icons -->
+    <div class="desktop">
+        <div class="desktop-icon" data-inactive="true">
+            <div class="icon-image icon-trash"></div>
+            <div class="icon-text">Corbeille</div>
+        </div>
+
+        <div class="desktop-icon" data-window="administrateur">
+            <div class="icon-image icon-administrateur"></div>
+            <div class="icon-text">Administrateur</div>
+        </div>
+        
+        <div class="desktop-icon" data-window="project">
+            <div class="icon-image icon-documents"></div>
+            <div class="icon-text">Mes Projets</div>
+        </div>
+
+        <div class="desktop-icon" data-window="galerie">
+            <div class="icon-image icon-galerie"></div>
+            <div class="icon-text">Galerie</div>
+        </div>
+
+        <div class="desktop-icon" data-inactive="true">
+            <div class="icon-image icon-cmd"></div>
+            <div class="icon-text">cmd</div>
+        </div>
+        
+        <div class="desktop-icon" data-inactive="true">
+            <div class="icon-image icon-notepad"></div>
+            <div class="icon-text">Bloc-notes</div>
+        </div>
+    </div>
+
+    <!-- Image Viewer -->
+    <div id="image-viewer" class="image-viewer">
+        <div class="image-viewer-close" onclick="closeImageViewer()">×</div>
+        <img id="viewer-image" src="/placeholder.svg" alt="Image">
+    </div>
+
+    <!-- Windows -->
+    <div id="project-window" class="window" style="top: 40px; left: 100px; width: 900px; height: 650px;">
+        <div class="window-header">
+            <div class="window-title">Mes Projets</div>
+            <div class="window-controls">
+                <div class="window-control" onclick="minimizeWindow('project-window')">−</div>
+                <div class="window-control" onclick="maximizeWindow('project-window')">□</div>
+                <div class="window-control" onclick="closeWindow('project-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3>📁 Mes Projets</h3>
+            <p>Voici la liste de mes projets :</p>
+            
+            <div class="project-grid">
+                <div class="project-item" onclick="openProject('pauvocoder')">
+                    <div class="project-icon icon-pauvocoder"></div>
+                    <div class="project-name">Pauvocoder</div>
+                    <div class="project-description">Projet de traitement audio</div>
+                    <div class="project-description"><strong>Java</strong></div>
+                </div>
+                
+                <div class="project-item" onclick="openProject('bouygues')">
+                    <div class="project-icon icon-bouygues"></div>
+                    <div class="project-name">Bouygues Telecom</div>
+                    <div class="project-description">Projet de site web</div>
+                    <div class="project-description"><strong>HTML / CSS</strong></div>
+                </div>
+                
+                <div class="project-item" onclick="openProject('naturalis')">
+                    <div class="project-icon icon-naturalis"></div>
+                    <div class="project-name">Naturalis</div>
+                    <div class="project-description">Projet de plateforme e-commerce</div>
+                    <div class="project-description"><strong>Python / MySQL</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fenêtre Galerie -->
+    <div id="galerie-window" class="window" style="top: 70px; left: 200px; width: 900px; height: 650px;">
+        <div class="window-header">
+            <div class="window-title">Galerie de Projets</div>
+            <div class="window-controls">
+                <div class="window-control" onclick="minimizeWindow('galerie-window')">−</div>
+                <div class="window-control" onclick="maximizeWindow('galerie-window')">□</div>
+                <div class="window-control" onclick="closeWindow('galerie-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3>🖼️ Galerie de Projets</h3>
+            <p>Cliquez sur un projet pour voir ses images :</p>
+            
+            <div class="project-grid">
+                <div class="project-item" onclick="openProjectGallery('pauvocoder')">
+                    <div class="project-icon icon-pauvocoder"></div>
+                    <div class="project-name">Pauvocoder</div>
+                    <div class="project-description">Voir les images</div>
+                    <div class="project-description"><strong>Java</strong></div>
+                </div>
+                
+                <div class="project-item" onclick="openProjectGallery('bouygues')">
+                    <div class="project-icon icon-bouygues"></div>
+                    <div class="project-name">Bouygues Telecom</div>
+                    <div class="project-description">Voir les images</div>
+                    <div class="project-description"><strong>HTML / CSS</strong></div>
+                </div>
+                
+                <div class="project-item" onclick="openProjectGallery('naturalis')">
+                    <div class="project-icon icon-naturalis"></div>
+                    <div class="project-name">Naturalis</div>
+                    <div class="project-description">Voir les images</div>
+                    <div class="project-description"><strong>Python / MySQL</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fenêtre Galerie Bouygues Telecom -->
+    <div id="bouygues-gallery-window" class="window" style="top: 90px; left: 250px; width: 1000px; height: 700px;">
+        <div class="window-header">
+            <div class="window-title">Galerie - Bouygues Telecom</div>
+            <div class="window-controls">
+                <div class="window-control" onclick="minimizeWindow('bouygues-gallery-window')">−</div>
+                <div class="window-control" onclick="maximizeWindow('bouygues-gallery-window')">□</div>
+                <div class="window-control" onclick="closeWindow('bouygues-gallery-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3>📱 Images du projet Bouygues Telecom</h3>
+            <p>Cliquez sur une image pour l'agrandir :</p>
+            
+            <div class="gallery-content">
+                <div class="gallery-image" onclick="viewImage('projet/Bouygues Telecom/accueil.jpg')">
+                    <img src="/placeholder.svg?height=150&width=200" alt="Page d'accueil">
+                    <div class="gallery-image-title">Page d'accueil</div>
+                </div>
+                
+                <div class="gallery-image" onclick="viewImage('projet/Bouygues Telecom/forfaits.jpg')">
+                    <img src="/placeholder.svg?height=150&width=200" alt="Page forfaits">
+                    <div class="gallery-image-title">Page forfaits</div>
+                </div>
+                
+                <div class="gallery-image" onclick="viewImage('projet/Bouygues Telecom/contact.jpg')">
+                    <img src="/placeholder.svg?height=150&width=200" alt="Page contact">
+                    <div class="gallery-image-title">Page contact</div>
+                </div>
+                
+                <div class="gallery-image" onclick="viewImage('projet/Bouygues Telecom/mobile.jpg')">
+                    <img src="/placeholder.svg?height=150&width=200" alt="Version mobile">
+                    <div class="gallery-image-title">Version mobile</div>
+                </div>
+                
+                <div class="gallery-image" onclick="viewImage('projet/Bouygues Telecom/menu.jpg')">
+                    <img src="/placeholder.svg?height=150&width=200" alt="Menu navigation">
+                    <div class="gallery-image-title">Menu navigation</div>
+                </div>
+                
+                <div class="gallery-image" onclick="viewImage('projet/Bouygues Telecom/footer.jpg')">
+                    <img src="/placeholder.svg?height=150&width=200" alt="Pied de page">
+                    <div class="gallery-image-title">Pied de page</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fenêtre Administrateur -->
+    <div id="administrateur-window" class="window" style="top: 50px; left: 150px; width: 850px; height: 600px;">
+        <div class="window-header">
+            <div class="window-title">Profil Administrateur</div>
+            <div class="window-controls">
+                <div class="window-control" onclick="minimizeWindow('administrateur-window')">−</div>
+                <div class="window-control" onclick="maximizeWindow('administrateur-window')">□</div>
+                <div class="window-control" onclick="closeWindow('administrateur-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="profile-content">
+                <div class="profile-header">
+                    <div class="profile-avatar"></div>
+                    <div class="profile-intro">
+                        <h1>Hi, I'm Andrew</h1>
+                    </div>
+                </div>
+
+                <div class="profile-description">
+                    Je me spécialise dans le développement web full stack. Cet espace fait office de portfolio en ligne pour présenter mes compétences et réalisations. N'hésitez pas à consulter ma page <strong>à propos</strong> pour en savoir plus sur moi.
+                </div>
+
+                <div class="profile-note">
+                    Ce site n'utilise aucun code source tiers tel que des bibliothèques, frameworks, APIs ou snippets fournis par l'IA. Tout le code source est écrit et développé par moi-même.
+                </div>
+
+                <div class="services-section">
+                    <h2>Je développe des sites web !</h2>
+                    <p>Vous voulez votre propre site web ou connaissez quelqu'un qui en a besoin ? J'ai plus de 13 ans d'expérience en développement web, envoyez-moi un <strong>email</strong> et nous pourrons discuter de votre projet. Je peux aider avec des projets existants, poser les fondations de nouveaux projets, et construire un projet entier à partir de zéro. Les tarifs varient, mais les conseils sont toujours gratuits.</p>
+                </div>
+
+                <div class="contact-info">
+                    <h3>💼 Services proposés :</h3>
+                    <ul>
+                        <li><strong>Développement web complet</strong> - Sites vitrine, e-commerce, applications web</li>
+                        <li><strong>Optimisation et maintenance</strong> - Amélioration des performances et sécurité</li>
+                        <li><strong>Conseil technique</strong> - Architecture, choix technologiques, bonnes pratiques</li>
+                        <li><strong>Formation</strong> - Accompagnement et transfert de compétences</li>
+                    </ul>
+                </div>
+
+                <div class="social-links">
+                    <a href="mailto:contact@example.com" class="social-link">
+                        <div class="social-icon email">✉</div>
+                        <span>Email</span>
+                    </a>
+                    
+                    <a href="https://github.com" target="_blank" class="social-link">
+                        <div class="social-icon github">⚡</div>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fenêtres de projets -->
+    <div id="pauvocoder-window" class="window" style="top: 60px; left: 120px; width: 800px; height: 600px;">
+        <div class="window-header">
+            <div class="window-title">Pauvocoder</div>
+            <div class="window-controls">
+                <div class="window-control" onclick="minimizeWindow('pauvocoder-window')">−</div>
+                <div class="window-control" onclick="maximizeWindow('pauvocoder-window')">□</div>
+                <div class="window-control" onclick="closeWindow('pauvocoder-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content project-content">
+            <h1>🎵 Projet Pauvocoder</h1>
+            
+            <div class="highlight-box">
+                <strong>Objectif du portfolio de BUT1 :</strong> Mettre en valeur des savoirs et savoir-faire en informatique
+            </div>
+
+            <h2>1. Introduction au Portfolio</h2>
+            <p><strong>L'objectif du portfolio de BUT1</strong> est de mettre en valeur des savoirs et savoir-faire, en prenant appui sur des traces (au moins 2) de type schéma, copie d'écran, maquette… Ces savoirs et savoir-faire doivent être en nombre suffisant (au moins 10 en cumulé), faire partie d'au moins un des six domaines de compétence, et surtout représenter des <strong>fondamentaux informatiques critiques</strong> et/ou importants en fin d'apprentissage du BUT1.</p>
+
+            <p>Avant tout essai de rédaction, il est donc important d'identifier quels sont les savoirs et savoir-faire que vous avez développés au cours du BUT1 et déterminer lesquels sont triviaux et lesquels sont réellement pertinents. Cependant, c'est un exercice compliqué pour un BUT1 (et même pour les autres années) qui n'a que peu d'expérience en informatique, quand bien même il n'est pas nécessaire de faire cette recherche de façon exhaustive puisque le portfolio n'illustrera qu'un nombre limité de savoirs et savoir-faire.</p>
+
+            <h2>2. Méthodologie d'Analyse</h2>
+            <p>Une solution possible est de partir des matières qui ont été abordées pour en extraire une liste, que vous devez ensuite décimer pour ne conserver que les éléments importants. Cette approche a malheureusement deux inconvénients. Selon les matières, il peut être compliqué d'extraire les savoirs et savoir-faire à partir des cours et travaux pratiques, mais surtout, les listes ainsi constituées vont contenir bon nombre d'éléments qui sont difficilement illustrables par des traces, ou alors de façon très indirecte.</p>
+
+            <p>C'est pourquoi les sections suivantes utilisent une <strong>approche basée sur des traces</strong> dont on extrait des savoirs et savoir-faire associés. Si vos traces sont bien choisies, c'est une tâche relativement facile, même si elle comporte quelques subtilités.</p>
+
+            <h2>3. Relation Savoirs/Savoir-faire</h2>
+            <p>En effet, une trace ne permet pas toujours d'illustrer à la fois des savoirs et des savoir-faire. Par exemple, un <strong>schéma d'architecture logicielle/matérielle</strong> ne prouve pas que vous avez le savoir-faire nécessaire pour implémenter ses différentes parties. En revanche, une copie d'écran d'une interface applicative le peut… à condition que votre discours dise explicitement qu'il s'agit de votre réalisation.</p>
+
+            <p>Le corollaire de cette remarque est qu'un même savoir peut être associé à plusieurs savoir-faire, puisqu'une connaissance peut être appliquée de différentes façons, dans différents contextes. Par conséquent, il est conseillé d'identifier d'abord les <strong>savoirs nécessaires</strong> pour réaliser une tâche donnée, puis d'en déduire les <strong>savoir-faire associés</strong> compte tenu de la nature et du contexte de cette tâche.</p>
+
+            <h2>4. Exemple Concret : Paradigme MVC</h2>
+            <div class="highlight-box">
+                <h3>Savoirs pertinents :</h3>
+                <ul>
+                    <li><strong>Le paradigme MVC</strong> - fondamental historique de l'informatique</li>
+                    <li><strong>Concept d'héritage</strong> pour créer des classes qui étendent les possibilités d'une bibliothèque</li>
+                </ul>
+
+                <h3>Savoir-faire associés :</h3>
+                <ul>
+                    <li>Créer une arborescence du projet séparant modèle, vue, contrôleur</li>
+                    <li>Concevoir des classes qui respectent la séparation MVC</li>
+                    <li>Créer des sous-classes spécifiques au projet</li>
+                    <li>Utiliser les packages Java</li>
+                </ul>
+            </div>
+
+            <h2>5. Recommandations Finales</h2>
+            <p>Une fois les savoirs et savoir-faire déterminés, la difficulté principale restante est de garder ceux qui sont pertinents et de les commenter correctement. Il est conseillé de :</p>
+            <ul>
+                <li><strong>Mettre en avant des savoirs</strong> dans le texte (en gras par exemple)</li>
+                <li><strong>Utiliser des marquages visuels</strong> (points, flèches, cadres) sur les traces</li>
+                <li><strong>Expliquer l'aspect fondamental</strong> des concepts abordés</li>
+                <li><strong>Contextualiser</strong> les savoir-faire selon le projet</li>
+            </ul>
+
+            <p>Le <strong>paradigme MVC</strong> fait partie des fondamentaux historiques de l'informatique pour structurer une application avec interface graphique. Il permet notamment de séparer complètement certaines fonctionnalités, donc de les développer en parallèle, au sein d'une équipe, d'où un gain de performance dans le travail.</p>
+        </div>
+    </div>
+
+    <div id="bouygues-window" class="window" style="top: 80px; left: 140px; width: 800px; height: 600px;">
+        <div class="window-header">
+            <div class="window-title">Bouygues Telecom</div>
+            <div class="window-controls">
+                <div class="window-control" onclick="minimizeWindow('bouygues-window')">−</div>
+                <div class="window-control" onclick="maximizeWindow('bouygues-window')">□</div>
+                <div class="window-control" onclick="closeWindow('bouygues-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content project-content">
+            <h1>📱 Projet Bouygues Telecom</h1>
+            
+            <div class="highlight-box">
+                <strong>Projet de développement web :</strong> Application des fondamentaux HTML/CSS
+            </div>
+
+            <h2>1. Contexte du Projet</h2>
+            <p>Ce projet s'inscrit dans le cadre du <strong>développement web front-end</strong>, une compétence fondamentale en informatique moderne. L'objectif était de créer une interface utilisateur responsive et accessible, en appliquant les principes de base du web.</p>
+
+            <h2>2. Technologies Utilisées</h2>
+            <div class="highlight-box">
+                <h3>Savoirs techniques :</h3>
+                <ul>
+                    <li><strong>HTML5</strong> - Structure sémantique des documents web</li>
+                    <li><strong>CSS3</strong> - Mise en forme et responsive design</li>
+                    <li><strong>Accessibilité web</strong> - Standards WCAG</li>
+                    <li><strong>Responsive design</strong> - Adaptation multi-écrans</li>
+                </ul>
+            </div>
+
+            <h2>3. Savoir-faire Développés</h2>
+            <p>À travers ce projet, j'ai pu développer plusieurs <strong>savoir-faire critiques</strong> :</p>
+            <ul>
+                <li><strong>Structuration HTML sémantique</strong> - Utilisation appropriée des balises</li>
+                <li><strong>Mise en page CSS</strong> - Flexbox et Grid Layout</li>
+                <li><strong>Optimisation des performances</strong> - Minification et compression</li>
+                <li><strong>Tests cross-browser</strong> - Compatibilité navigateurs</li>
+            </ul>
+
+            <h2>4. Défis Techniques Rencontrés</h2>
+            <p>Le principal défi a été de créer une interface qui respecte l'identité visuelle de Bouygues Telecom tout en maintenant une <strong>expérience utilisateur optimale</strong>. Cela a nécessité :</p>
+            <ul>
+                <li>Une analyse approfondie des guidelines de la marque</li>
+                <li>L'implémentation de composants réutilisables</li>
+                <li>La gestion de la compatibilité avec les anciens navigateurs</li>
+            </ul>
+
+            <h2>5. Résultats et Apprentissages</h2>
+            <p>Ce projet m'a permis de comprendre l'importance de la <strong>séparation des préoccupations</strong> en développement web. La distinction claire entre structure (HTML), présentation (CSS) et comportement (JavaScript) est un principe fondamental qui facilite la maintenance et l'évolution du code.</p>
+
+            <div class="highlight-box">
+                <p><strong>Compétence clé développée :</strong> Capacité à traduire une maquette graphique en code web fonctionnel et accessible, en respectant les standards du web moderne.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="naturalis-window" class="window" style="top: 100px; left: 160px; width: 800px; height: 600px;">
+        <div class="window-header">
+            <div class="window-title">Naturalis</div>
+            <div class="window-controls">
+                <div class="window-control" onclick="minimizeWindow('naturalis-window')">−</div>
+                <div class="window-control" onclick="maximizeWindow('naturalis-window')">□</div>
+                <div class="window-control" onclick="closeWindow('naturalis-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content project-content">
+            <h1>🌿 Projet Naturalis</h1>
+            
+            <div class="highlight-box">
+                <strong>Plateforme e-commerce :</strong> Intégration Python/MySQL et architecture web
+            </div>
+
+            <h2>1. Architecture de la Solution</h2>
+            <p>Le projet Naturalis représente une <strong>plateforme e-commerce complète</strong> développée avec Python et MySQL. Cette réalisation illustre la maîtrise de concepts fondamentaux en développement d'applications web et gestion de bases de données.</p>
+
+            <h2>2. Compétences Techniques Mobilisées</h2>
+            <div class="highlight-box">
+                <h3>Savoirs en base de données :</h3>
+                <ul>
+                    <li><strong>Modélisation relationnelle</strong> - Conception de schémas normalisés</li>
+                    <li><strong>SQL avancé</strong> - Requêtes complexes et optimisation</li>
+                    <li><strong>Gestion des transactions</strong> - ACID et cohérence des données</li>
+                    <li><strong>Sécurité des données</strong> - Prévention des injections SQL</li>
+                </ul>
+
+                <h3>Savoirs en développement Python :</h3>
+                <ul>
+                    <li><strong>Programmation orientée objet</strong> - Classes et héritage</li>
+                    <li><strong>Framework web</strong> - Architecture MVC avec Flask/Django</li>
+                    <li><strong>ORM</strong> - Mapping objet-relationnel</li>
+                    <li><strong>API REST</strong> - Services web et JSON</li>
+                </ul>
+            </div>
+
+            <h2>3. Défis d'Intégration</h2>
+            <p>L'un des aspects les plus complexes du projet a été l'<strong>intégration entre la couche applicative Python et la base de données MySQL</strong>. Cette intégration nécessite une compréhension approfondie de :</p>
+            <ul>
+                <li>La gestion des connexions et du pool de connexions</li>
+                <li>L'optimisation des requêtes pour les performances</li>
+                <li>La gestion des erreurs et de la récupération</li>
+                <li>La sécurisation des accès aux données</li>
+            </ul>
+
+            <h2>4. Fonctionnalités E-commerce</h2>
+            <p>La plateforme implémente les <strong>fonctionnalités essentielles</strong> d'un site e-commerce :</p>
+            <ul>
+                <li><strong>Catalogue produits</strong> - Gestion des catégories et recherche</li>
+                <li><strong>Panier d'achat</strong> - Sessions utilisateur et persistance</li>
+                <li><strong>Système de commandes</strong> - Workflow complet de vente</li>
+                <li><strong>Gestion des utilisateurs</strong> - Authentification et autorisation</li>
+                <li><strong>Interface d'administration</strong> - Back-office pour la gestion</li>
+            </ul>
+
+            <h2>5. Apprentissages Fondamentaux</h2>
+            <p>Ce projet m'a permis de maîtriser des <strong>concepts fondamentaux</strong> de l'informatique moderne :</p>
+
+            <div class="highlight-box">
+                <h3>Architecture logicielle :</h3>
+                <p>Compréhension de l'importance de la <strong>séparation des couches</strong> (présentation, logique métier, accès aux données) pour créer des applications maintenables et évolutives.</p>
+
+                <h3>Gestion des données :</h3>
+                <p>Maîtrise des principes de <strong>conception de bases de données</strong> et de l'importance de la normalisation pour éviter la redondance et garantir l'intégrité.</p>
+
+                <h3>Sécurité applicative :</h3>
+                <p>Sensibilisation aux <strong>vulnérabilités web</strong> courantes et mise en œuvre de bonnes pratiques de sécurisation.</p>
+            </div>
+
+            <h2>6. Impact Pédagogique</h2>
+            <p>Ce projet synthétise de nombreux apprentissages du BUT1 et démontre la capacité à <strong>intégrer différentes technologies</strong> pour créer une solution fonctionnelle. Il illustre parfaitement la transition d'une approche théorique vers une mise en pratique concrète des concepts informatiques.</p>
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div id="start-menu" class="start-menu">
+        <div class="start-menu-header">
+            <div class="user-section">
+                <div class="user-avatar"></div>
+                <div class="user-name">Administrateur</div>
+            </div>
+        </div>
+        <div class="start-menu-items">
+            <div class="start-menu-item" onclick="openWindow('project-window')">Mes Projets</div>
+            <div class="start-menu-item" onclick="openWindow('galerie-window')">Galerie</div>
+            <div class="start-menu-item" onclick="openWindow('administrateur-window')">Administrateur</div>
+            <div class="start-menu-item">Bloc-notes</div>
+            <div class="start-menu-item">cmd</div>
+            <div class="start-menu-item">Corbeille</div>
+            <div class="start-menu-item">Panneau de configuration</div>
+            <div style="border-top: 1px solid #ccc; margin: 4px 16px;"></div>
+            <div class="start-menu-item" onclick="restartComputer()">Redémarrer</div>
+            <div class="start-menu-item" onclick="shutdownComputer()">Éteindre</div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="start-button" onclick="toggleStartMenu()">
+            <div class="start-icon"></div>
+            Démarrer
+        </div>
+        
+        <!-- Zone des applications minimisées -->
+        <div class="taskbar-apps" id="taskbar-apps">
+            <!-- Les applications minimisées apparaîtront ici -->
+        </div>
+        
+        <div class="clock">
+            <div id="time"></div>
+            <div style="font-size: 11px;" id="date"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let activeWindows = new Set();
+        let minimizedWindows = new Map();
+        let isDragging = false;
+        let currentWindow = null;
+        let offset = { x: 0, y: 0 };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            setupDesktopIcons();
+            setupWindowDragging();
+        });
+
+        // Gestion de l'horloge
+        function updateClock() {
+            const now = new Date();
+            const timeElement = document.getElementById('time');
+            const dateElement = document.getElementById('date');
+            
+            timeElement.textContent = now.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            dateElement.textContent = now.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Gestion du menu Démarrer
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('start-menu');
+            startMenu.classList.toggle('active');
+        }
+
+        // Fermer le menu Démarrer au clic ailleurs
+        document.addEventListener('click', function(e) {
+            const startMenu = document.getElementById('start-menu');
+            const startButton = document.querySelector('.start-button');
+            
+            if (!startMenu.contains(e.target) && !startButton.contains(e.target)) {
+                startMenu.classList.remove('active');
+            }
+        });
+
+        // Gestion des icônes du bureau
+        function setupDesktopIcons() {
+            const icons = document.querySelectorAll('.desktop-icon');
+            
+            icons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    if (this.dataset.inactive === "true") return;
+                    
+                    icons.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+                
+                icon.addEventListener('dblclick', function() {
+                    if (this.dataset.inactive === "true") return;
+                    
+                    const windowId = this.dataset.window + '-window';
+                    if (windowId !== 'undefined-window') {
+                        openWindow(windowId);
+                    }
+                });
+            });
+        }
+
+        // Ouvrir une fenêtre
+        function openWindow(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.classList.add('active');
+                window.classList.remove('minimized');
+                window.style.zIndex = getHighestZIndex() + 1;
+                activeWindows.add(windowId);
+                
+                removeFromTaskbar(windowId);
+            }
+            
+            document.getElementById('start-menu').classList.remove('active');
+        }
+
+        // Fermer une fenêtre
+        function closeWindow(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.classList.remove('active');
+                window.classList.remove('maximized');
+                window.classList.remove('minimized');
+                activeWindows.delete(windowId);
+                minimizedWindows.delete(windowId);
+                removeFromTaskbar(windowId);
+            }
+        }
+
+        // Minimiser une fenêtre
+        function minimizeWindow(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.classList.remove('active');
+                window.classList.add('minimized');
+                activeWindows.delete(windowId);
+                
+                addToTaskbar(windowId);
+            }
+        }
+
+        // Ajouter une fenêtre à la barre des tâches
+        function addToTaskbar(windowId) {
+            const taskbarApps = document.getElementById('taskbar-apps');
+            
+            if (document.getElementById('taskbar-' + windowId)) return;
+            
+            const taskbarApp = document.createElement('div');
+            taskbarApp.className = 'taskbar-app';
+            taskbarApp.id = 'taskbar-' + windowId;
+            taskbarApp.onclick = () => restoreWindow(windowId);
+            
+            const icon = document.createElement('div');
+            icon.className = 'taskbar-app-icon';
+            
+            const title = document.createElement('div');
+            title.className = 'taskbar-app-title';
+            
+            // Définir l'icône et le titre selon le type de fenêtre
+            const windowTitles = {
+                'project-window': 'Mes Projets',
+                'galerie-window': 'Galerie',
+                'bouygues-gallery-window': 'Galerie Bouygues',
+                'administrateur-window': 'Administrateur',
+                'pauvocoder-window': 'Pauvocoder',
+                'bouygues-window': 'Bouygues Telecom',
+                'naturalis-window': 'Naturalis'
+            };
+            
+            const windowIcons = {
+                'galerie-window': 'url("image/galerie.png")',
+                'bouygues-gallery-window': 'url("image/galerie.png")'
+            };
+            
+            icon.style.backgroundImage = windowIcons[windowId] || 'url("image/documents.png")';
+            title.textContent = windowTitles[windowId] || 'Application';
+            
+            taskbarApp.appendChild(icon);
+            taskbarApp.appendChild(title);
+            taskbarApps.appendChild(taskbarApp);
+            
+            minimizedWindows.set(windowId, taskbarApp);
+        }
+
+        // Supprimer une fenêtre de la barre des tâches
+        function removeFromTaskbar(windowId) {
+            const taskbarApp = document.getElementById('taskbar-' + windowId);
+            if (taskbarApp) {
+                taskbarApp.remove();
+                minimizedWindows.delete(windowId);
+            }
+        }
+
+        // Restaurer une fenêtre depuis la barre des tâches
+        function restoreWindow(windowId) {
+            openWindow(windowId);
+        }
+
+        // Maximiser/Restaurer une fenêtre
+        function maximizeWindow(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.classList.toggle('maximized');
+            }
+        }
+
+        // Ouvrir un projet - Fonction pour "Mes Projets"
+        function openProject(projectName) {
+            const windowId = projectName + '-window';
+            openWindow(windowId);
+        }
+
+        // Ouvrir une galerie de projet - Nouvelle fonction pour "Galerie"
+        function openProjectGallery(projectName) {
+            if (projectName === 'bouygues') {
+                openWindow('bouygues-gallery-window');
+            } else {
+                // Pour les autres projets, on peut afficher un message ou ouvrir une galerie vide
+                alert('Galerie non disponible pour ce projet');
+            }
+        }
+
+        // Visualiser une image en grand
+        function viewImage(imagePath) {
+            const viewer = document.getElementById('image-viewer');
+            const viewerImage = document.getElementById('viewer-image');
+            
+            viewerImage.src = imagePath;
+            viewer.classList.add('active');
+        }
+
+        // Fermer le visualiseur d'images
+        function closeImageViewer() {
+            const viewer = document.getElementById('image-viewer');
+            viewer.classList.remove('active');
+        }
+
+        // Fermer le visualiseur en cliquant sur l'arrière-plan
+        document.getElementById('image-viewer').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageViewer();
+            }
+        });
+
+        // Obtenir le z-index le plus élevé
+        function getHighestZIndex() {
+            let highest = 1000;
+            const windows = document.querySelectorAll('.window');
+            
+            windows.forEach(window => {
+                const zIndex = parseInt(window.style.zIndex) || 1000;
+                if (zIndex > highest) {
+                    highest = zIndex;
+                }
+            });
+            
+            return highest;
+        }
+
+        // Gestion du glisser-déposer des fenêtres
+        function setupWindowDragging() {
+            const windowHeaders = document.querySelectorAll('.window-header');
+            
+            windowHeaders.forEach(header => {
+                header.addEventListener('mousedown', function(e) {
+                    if (e.target.classList.contains('window-control')) return;
+                    
+                    const window = this.parentElement;
+                    if (window.classList.contains('maximized')) return;
+                    
+                    isDragging = true;
+                    currentWindow = window;
+                    
+                    const rect = currentWindow.getBoundingClientRect();
+                    offset.x = e.clientX - rect.left;
+                    offset.y = e.clientY - rect.top;
+                    
+                    currentWindow.style.zIndex = getHighestZIndex() + 1;
+                    
+                    e.preventDefault();
+                });
+            });
+        }
+
+        // Gestion du mouvement de la souris
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging && currentWindow && !currentWindow.classList.contains('maximized')) {
+                const x = e.clientX - offset.x;
+                const y = e.clientY - offset.y;
+                
+                const maxX = window.innerWidth - currentWindow.offsetWidth;
+                const maxY = window.innerHeight - currentWindow.offsetHeight - 60;
+                
+                currentWindow.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                currentWindow.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+            }
+        });
+
+        // Arrêter le glisser-déposer
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+            currentWindow = null;
+        });
+
+        // Clic sur les fenêtres pour les mettre au premier plan
+        document.addEventListener('click', function(e) {
+            const window = e.target.closest('.window');
+            if (window) {
+                window.style.zIndex = getHighestZIndex() + 1;
+            }
+        });
+
+        function restartComputer() {
+            window.location.href = 'nouveau-bureau.html';
+        }
+
+        function shutdownComputer() {
+            window.close();
+        }
+    </script>
+</body>
+</html>
