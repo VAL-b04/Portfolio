@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="image/favicon.ico">
+    <title>Demarrage Windows XP</title>
+    <style>
+        @font-face {
+            font-family: 'MS Gothic';
+            src: url('image/ms-gothic.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Tahoma", "Arial", sans-serif;
+            background: linear-gradient(180deg, #4a6cb8 0%, #6b8dd6 50%, #4a6cb8 100%);
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+            cursor: url('image/curseur.png'), auto;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 50px;
+        }
+
+        .login-container {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .left-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .windows-logo {
+            width: 400px;
+            height: 400px;
+            background-image: url('image/logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .prompt-message {
+            font-size: 18px;
+            color: #d0d8e0;
+            margin-top: 40px;
+        }
+
+        .separator {
+            width: 3px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 30px;
+        }
+
+        .right-section {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .user-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 35px;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .user-avatar {
+            width: 90px;
+            height: 90px;
+            background-image: url('image/profil.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
+        }
+
+        .user-details h2 {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .user-details p {
+            font-size: 16px;
+            color: #d0d8e0;
+        }
+
+        .password-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .password-field {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #7a8ba3;
+            border-radius: 5px;
+            font-size: 16px;
+            background: white;
+            color: black;
+            font-family: inherit;
+            height: 45px;
+        }
+
+        .password-field:focus {
+            outline: none;
+            border-color: #316ac5;
+            box-shadow: 0 0 6px rgba(49, 106, 197, 0.4);
+        }
+
+        .login-btn {
+            width: 45px;
+            height: 45px;
+            background: #4a8bc8;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('image/entrer.png');
+            background-size: 24px 24px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="left-section">
+                <div class="windows-logo"></div>
+                <div class="prompt-message">Pour commencer, saisissez votre mot de passe</div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="right-section">
+                <div class="user-card">
+                    <div class="user-profile">
+                        <div class="user-avatar"></div>
+                        <div class="user-details">
+                            <h2>Administrateur</h2>
+                            <p>Saisissez votre mot de passe</p>
+                        </div>
+                    </div>
+                    
+                    <div class="password-container">
+                        <input type="password" class="password-field" id="passwordInput" autofocus>
+                        <button class="login-btn" onclick="handleLogin()"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin() {
+            const password = document.getElementById('passwordInput').value;
+            if (password.length > 0) {
+                window.location.href = 'accueil.html';
+            }
+        }
+
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+
+        window.onload = function() {
+            document.getElementById('passwordInput').focus();
+        };
+    </script>
+</body>
+</html>

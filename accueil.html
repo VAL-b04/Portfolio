@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="image/favicon.ico">
+    <title>Mon Bureau Windows XP</title>
+    <style>
+        /* css/styles.css - Styles principaux */
+        @font-face {
+            font-family: 'MS Gothic';
+            src: url('image/ms-gothic.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "MS Gothic", 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #4169E1 0%, #87CEEB 100%);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background-image: url('image/fond_d_ecran.jpg');
+            background-size: cover;
+            cursor: url('image/curseur.png'), auto;
+        }
+
+        /* Desktop Icons */
+        .desktop {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100%;
+            height: calc(100% - 80px);
+        }
+
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .desktop-icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .desktop-icon.selected {
+            background-color: rgba(0, 123, 255, 0.3);
+            border: 1px dotted #fff;
+        }
+
+        .icon-image {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 4px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .icon-text {
+            color: white;
+            font-size: 11px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            line-height: 1.2;
+        }
+
+        /* Taskbar */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to bottom, #3d6dcc 0%, #2952a3 50%, #1941a5 51%, #1941a5 100%);
+            border-top: 1px solid #5c8cd6;
+            display: flex;
+            align-items: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .start-button {
+            height: 32px;
+            background: linear-gradient(to bottom, #3d6dcc 0%, #2952a3 50%, #1941a5 51%, #1941a5 100%);
+            border: 1px solid #5c8cd6;
+            border-radius: 6px;
+            margin: 4px;
+            padding: 0 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.1s;
+        }
+
+        .start-button:hover {
+            background: linear-gradient(to bottom, #4d7ddc 0%, #3962b3 50%, #2951b5 51%, #2951b5 100%);
+        }
+
+        .start-button:active {
+            background: linear-gradient(to bottom, #2d5dbc 0%, #1942a3 50%, #0931a5 51%, #0931a5 100%);
+            border: 1px solid #4c7cc6;
+        }
+
+        .start-icon {
+            width: 16px;
+            height: 16px;
+            background-image: url('image/favicon.ico');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .clock {
+            margin-left: auto;
+            margin-right: 8px;
+            color: white;
+            font-size: 11px;
+            text-align: center;
+            padding: 4px 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+        }
+
+        /* Window Styles */
+        .window {
+            position: absolute;
+            background: #ece9d8;
+            border: 2px outset #ece9d8;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            display: none;
+            min-width: 400px;
+            min-height: 300px;
+        }
+
+        .window.active {
+            display: block;
+        }
+
+        .window-header {
+            background: linear-gradient(to right, #0054e3 0%, #0054e3 8%, #40a0ff 92%, #40a0ff 100%);
+            height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            border-radius: 6px 6px 0 0;
+            cursor: move;
+        }
+
+        .window-title {
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            flex: 1;
+            margin-left: 4px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-control {
+            width: 21px;
+            height: 21px;
+            background: linear-gradient(to bottom, #ece9d8 0%, #d6d3ce 100%);
+            border: 1px outset #ece9d8;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: 'Marlett', monospace;
+        }
+
+        .window-control:hover {
+            background: linear-gradient(to bottom, #f5f4f2 0%, #e5e2dd 100%);
+        }
+
+        .window-control:active {
+            border: 1px inset #ece9d8;
+        }
+
+        .window-content {
+            padding: 16px;
+            height: calc(100% - 32px);
+            overflow-y: auto;
+            font-size: 11px;
+        }
+
+        /* Start Menu */
+        .start-menu {
+            position: fixed;
+            bottom: 40px;
+            left: 0;
+            width: 300px;
+            background: linear-gradient(to right, #2461cb 0%, #2461cb 60px, #f1f1f1 60px, #f1f1f1 100%);
+            border: 2px outset #ece9d8;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            display: none;
+            box-shadow: 2px -2px 10px rgba(0,0,0,0.3);
+        }
+
+        .start-menu.active {
+            display: block;
+        }
+
+        .start-menu-header {
+            height: 60px;
+            background: linear-gradient(45deg, #1a4ba3, #2461cb);
+            color: white;
+            display: flex;
+            align-items: flex-end;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 80px solid #2461cb;
+            position: relative;
+        }
+
+        .user-section {
+            position: absolute;
+            bottom: -70px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background-image: url('image/profil.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-name {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .start-menu-items {
+            padding: 8px 0;
+            margin-top: 20px; /* Ajouter de l'espace pour éviter le chevauchement avec la section utilisateur */
+        }
+
+        .start-menu-item {
+            height: 32px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 11px;
+            position: relative;
+            padding-left: 70px; /* Espace pour que le texte soit dans la partie blanche */
+        }
+
+        /* Ajouter les icônes dans la partie bleue */
+        .start-menu-item::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            background-size: 24px 24px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .start-menu-item:nth-child(1)::before { background-image: url('image/documents.png'); }
+        .start-menu-item:nth-child(2)::before { background-image: url('image/profil.jpg'); }
+        .start-menu-item:nth-child(3)::before { background-image: url('image/bloc-note.png'); }
+        .start-menu-item:nth-child(4)::before { background-image: url('image/cmd.png'); }
+        .start-menu-item:nth-child(5)::before { background-image: url('image/corbeille.png'); }
+        .start-menu-item:nth-child(6)::before { background-image: url('image/parametre.png'); }
+        .start-menu-item:nth-child(8)::before { background-image: url('image/logoff.png'); }
+        .start-menu-item:nth-child(9)::before { background-image: url('image/shutdown.png'); }
+
+        .folder-structure {
+            background: #f5f5f5;
+            border: 1px inset #ece9d8;
+            padding: 12px;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: #ffff99;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        /* Icons */
+        .icon-cmd { 
+            background-image: url('image/cmd.png'); 
+        }
+        .icon-documents { 
+            background-image: url('image/documents.png'); 
+        }
+        .icon-notepad { 
+            background-image: url('image/bloc-note.png'); 
+        }
+        .icon-trash {
+            background-image: url('image/corbeille.png');
+        }
+        .icon-administrateur { 
+            background-image: url('image/profil.jpg'); 
+        }
+
+        .logoff-item {
+            background-image: url('image/logoff.png') !important;
+            background-repeat: no-repeat !important;
+            background-position: 16px center !important;
+            background-size: 24px 24px !important;
+        }
+
+        .shutdown-item {
+            background-image: url('image/shutdown.png') !important;
+            background-repeat: no-repeat !important;
+            background-position: 16px center !important;
+            background-size: 24px 24px !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Desktop Icons -->
+    <div class="desktop">
+        <div class="desktop-icon">
+            <div class="icon-image icon-trash"></div>
+            <div class="icon-text">Corbeille</div>
+        </div>
+
+        <div class="desktop-icon" data-window="notepad">
+            <div class="icon-image icon-administrateur"></div>
+            <div class="icon-text">Administrateur</div>
+        </div>
+        
+        <div class="desktop-icon" data-window="project">
+            <div class="icon-image icon-documents"></div>
+            <div class="icon-text">Mes Projets</div>
+        </div>
+
+        <div class="desktop-icon" data-window="computer">
+            <div class="icon-image icon-cmd"></div>
+            <div class="icon-text">cmd</div>
+        </div>
+        
+        <div class="desktop-icon" data-window="notepad">
+            <div class="icon-image icon-notepad"></div>
+            <div class="icon-text">Bloc-notes</div>
+        </div>
+    </div>
+
+    <!-- Windows -->
+    <div id="computer-window" class="window" style="top: 80px; left: 100px; width: 500px; height: 400px;">
+        <div class="window-header">
+            <div class="window-title">cmd</div>
+            <div class="window-controls">
+                <div class="window-control">−</div>
+                <div class="window-control">□</div>
+                <div class="window-control" onclick="closeWindow('computer-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3>Configuration système</h3>
+            <p><strong>Système d'exploitation :</strong> Windows XP Nostalgique</p>
+            <p><strong>Processeur :</strong> Processeur de nostalgie 2.4 GHz</p>
+            <p><strong>Mémoire :</strong> 512 MB de souvenirs</p>
+            <p><strong>Disque dur :</strong> 40 GB d'époque</p>
+            <br>
+            <div class="highlight">Bienvenue dans votre environnement de développement rétro !</div>
+        </div>
+    </div>
+
+    <div id="project-window" class="window" style="top: 60px; left: 150px; width: 600px; height: 500px;">
+        <div class="window-header">
+            <div class="window-title">Structure du Projet</div>
+            <div class="window-controls">
+                <div class="window-control">−</div>
+                <div class="window-control">□</div>
+                <div class="window-control" onclick="closeWindow('project-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3>📁 Organisation des dossiers par langage</h3>
+            <div class="folder-structure">
+mon-site-web/
+├── 📁 html/
+│   ├── index.html
+│   ├── about.html
+│   └── contact.html
+├── 📁 css/
+│   ├── styles.css
+│   ├── responsive.css
+│   └── animations.css
+├── 📁 js/
+│   ├── main.js
+│   ├── utils.js
+│   └── components.js
+├── 📁 images/
+│   ├── logo.png
+│   ├── banner.jpg
+│   └── icons/
+└── 📁 assets/
+    ├── fonts/
+    └── videos/
+            </div>
+            
+            <h4>🎯 Avantages de cette structure :</h4>
+            <ul>
+                <li><strong>Séparation claire</strong> : Chaque type de fichier dans son dossier</li>
+                <li><strong>Maintenance facile</strong> : Retrouver rapidement le bon fichier</li>
+                <li><strong>Collaboration</strong> : Plusieurs développeurs peuvent travailler sans conflit</li>
+                <li><strong>Évolutivité</strong> : Facile d'ajouter de nouveaux fichiers</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="notepad-window" class="window" style="top: 120px; left: 250px; width: 550px; height: 400px;">
+        <div class="window-header">
+            <div class="window-title">Bloc-notes - Conseils de développement</div>
+            <div class="window-controls">
+                <div class="window-control">−</div>
+                <div class="window-control">□</div>
+                <div class="window-control" onclick="closeWindow('notepad-window')">×</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3>📝 Bonnes pratiques pour organiser votre code</h3>
+            
+            <h4>1. Dossier HTML :</h4>
+            <p>• Gardez vos fichiers HTML dans un dossier séparé<br>
+            • Utilisez des noms de fichiers descriptifs<br>
+            • Structurez vos pages de manière logique</p>
+            
+            <h4>2. Dossier CSS :</h4>
+            <p>• Séparez les styles par fonction (layout, components, utils)<br>
+            • Utilisez des conventions de nommage cohérentes<br>
+            • Organisez vos propriétés par ordre logique</p>
+            
+            <h4>3. Dossier JavaScript :</h4>
+            <p>• Modularisez votre code en petites fonctions<br>
+            • Utilisez des noms de variables explicites<br>
+            • Commentez les parties complexes</p>
+            
+            <div class="highlight">
+                💡 Astuce : Toujours tester votre site dans différents navigateurs !
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div id="start-menu" class="start-menu">
+        <div class="start-menu-header">
+            <div class="user-section">
+                <div class="user-avatar"></div>
+                <div class="user-name">Administrateur</div>
+            </div>
+        </div>
+        <div class="start-menu-items">
+            <div class="start-menu-item" onclick="openWindow('project-window')">Mes Projets</div>
+            <div class="start-menu-item" onclick="openWindow('notepad-window')">Administrateur</div>
+            <div class="start-menu-item" onclick="openWindow('notepad-window')">Bloc-notes</div>
+            <div class="start-menu-item" onclick="openWindow('computer-window')">cmd</div>
+            <div class="start-menu-item">Corbeille</div>
+            <div class="start-menu-item">Panneau de configuration</div>
+            <div style="border-top: 1px solid #ccc; margin: 4px 16px;"></div>
+            <div class="start-menu-item" onclick="restartComputer()">Redémarrer</div>
+            <div class="start-menu-item" onclick="shutdownComputer()">Éteindre</div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="start-button" onclick="toggleStartMenu()">
+            <div class="start-icon"></div>
+            Démarrer
+        </div>
+        <div class="clock">
+            <div id="time"></div>
+            <div style="font-size: 9px;" id="date"></div>
+        </div>
+    </div>
+
+    <script>
+        // js/main.js - Script principal
+        
+        // Variables globales
+        let activeWindows = new Set();
+        let isDragging = false;
+        let currentWindow = null;
+        let offset = { x: 0, y: 0 };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            setupDesktopIcons();
+            setupWindowDragging();
+        });
+
+        // Gestion de l'horloge
+        function updateClock() {
+            const now = new Date();
+            const timeElement = document.getElementById('time');
+            const dateElement = document.getElementById('date');
+            
+            timeElement.textContent = now.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            dateElement.textContent = now.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Gestion du menu Démarrer
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('start-menu');
+            startMenu.classList.toggle('active');
+        }
+
+        // Fermer le menu Démarrer au clic ailleurs
+        document.addEventListener('click', function(e) {
+            const startMenu = document.getElementById('start-menu');
+            const startButton = document.querySelector('.start-button');
+            
+            if (!startMenu.contains(e.target) && !startButton.contains(e.target)) {
+                startMenu.classList.remove('active');
+            }
+        });
+
+        // Gestion des icônes du bureau
+        function setupDesktopIcons() {
+            const icons = document.querySelectorAll('.desktop-icon');
+            
+            icons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    // Désélectionner toutes les icônes
+                    icons.forEach(i => i.classList.remove('selected'));
+                    // Sélectionner l'icône cliquée
+                    this.classList.add('selected');
+                });
+                
+                icon.addEventListener('dblclick', function() {
+                    const windowId = this.dataset.window + '-window';
+                    if (windowId !== 'undefined-window') {
+                        openWindow(windowId);
+                    }
+                });
+            });
+        }
+
+        // Ouvrir une fenêtre
+        function openWindow(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.classList.add('active');
+                window.style.zIndex = getHighestZIndex() + 1;
+                activeWindows.add(windowId);
+            }
+            
+            // Fermer le menu Démarrer
+            document.getElementById('start-menu').classList.remove('active');
+        }
+
+        // Fermer une fenêtre
+        function closeWindow(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.classList.remove('active');
+                activeWindows.delete(windowId);
+            }
+        }
+
+        // Obtenir le z-index le plus élevé
+        function getHighestZIndex() {
+            let highest = 1000;
+            const windows = document.querySelectorAll('.window');
+            
+            windows.forEach(window => {
+                const zIndex = parseInt(window.style.zIndex) || 1000;
+                if (zIndex > highest) {
+                    highest = zIndex;
+                }
+            });
+            
+            return highest;
+        }
+
+        // Gestion du glisser-déposer des fenêtres
+        function setupWindowDragging() {
+            const windowHeaders = document.querySelectorAll('.window-header');
+            
+            windowHeaders.forEach(header => {
+                header.addEventListener('mousedown', function(e) {
+                    if (e.target.classList.contains('window-control')) return;
+                    
+                    isDragging = true;
+                    currentWindow = this.parentElement;
+                    
+                    const rect = currentWindow.getBoundingClientRect();
+                    offset.x = e.clientX - rect.left;
+                    offset.y = e.clientY - rect.top;
+                    
+                    // Mettre la fenêtre au premier plan
+                    currentWindow.style.zIndex = getHighestZIndex() + 1;
+                    
+                    e.preventDefault();
+                });
+            });
+        }
+
+        // Gestion du mouvement de la souris
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging && currentWindow) {
+                const x = e.clientX - offset.x;
+                const y = e.clientY - offset.y;
+                
+                // Limiter le déplacement dans les limites de l'écran
+                const maxX = window.innerWidth - currentWindow.offsetWidth;
+                const maxY = window.innerHeight - currentWindow.offsetHeight - 40; // 40px pour la barre des tâches
+                
+                currentWindow.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                currentWindow.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+            }
+        });
+
+        // Arrêter le glisser-déposer
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+            currentWindow = null;
+        });
+
+        // Clic sur les fenêtres pour les mettre au premier plan
+        document.addEventListener('click', function(e) {
+            const window = e.target.closest('.window');
+            if (window) {
+                window.style.zIndex = getHighestZIndex() + 1;
+            }
+        });
+
+        // Animations d'ouverture des fenêtres
+        function animateWindowOpen(windowId) {
+            const window = document.getElementById(windowId);
+            if (window) {
+                window.style.transform = 'scale(0.8)';
+                window.style.opacity = '0';
+                
+                setTimeout(() => {
+                    window.style.transition = 'all 0.2s ease-out';
+                    window.style.transform = 'scale(1)';
+                    window.style.opacity = '1';
+                }, 10);
+                
+                setTimeout(() => {
+                    window.style.transition = '';
+                }, 200);
+            }
+        }
+
+        // Effet de survol des icônes
+        document.querySelectorAll('.desktop-icon').forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'transform 0.1s ease';
+            });
+            
+            icon.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Fonction pour redémarrer (redirection vers demarrage.html)
+        function restartComputer() {
+            window.location.href = 'demarrage.html';
+        }
+
+        // Fonction pour éteindre (fermer la fenêtre)
+        function shutdownComputer() {
+            window.close();
+        }
+    </script>
+</body>
+</html>
