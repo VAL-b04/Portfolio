@@ -756,8 +756,8 @@ body {
 .start-menu-item:nth-child(5)::before { background-image: url('image/cmd.png'); }
 .start-menu-item:nth-child(6)::before { background-image: url('image/corbeille.png'); }
 .start-menu-item:nth-child(7)::before { background-image: url('image/parametre.png'); }
-.start-menu-item:nth-child(9)::before { background-image: url('image/logoff.png'); }
-.start-menu-item:nth-child(10)::before { background-image: url('image/shutdown.png'); }
+.start-menu-item:nth-child(9)::before { background-image: url('image/redemarrage.png'); }
+.start-menu-item:nth-child(10)::before { background-image: url('image/arret.png'); }
 
 .highlight {
     background: #ffff99;
